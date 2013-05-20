@@ -1,0 +1,50 @@
+<h1>AngularJS and ProcessingJS Integration</h1>
+<p>
+  This demo shows how to integrate the <a href="http://processingjs.org/">ProcessingJS</a>
+  library with you <a href="http://angularjs.org">AngularJS</a> application.
+</p>
+
+<h2>Demo</h2>
+<p>
+  Click anywhere on the canvas below to move the circle, or use the buttons and
+  sliders below.
+</p>
+<canvas processing="sketch" ng-click="move($sketch)"></canvas>
+
+<div>
+  <button ng-click="randomPosition()">Random Position</button>
+  <button ng-click="center()">Center</button>
+</div>
+
+<div>
+  <button ng-click="randomColor()">Random Color</button>
+  <button ng-click="colorRed()">Red</button>
+  <button ng-click="colorGreen()">Green</button>
+  <button ng-click="colorBlue()">Blue</button>
+</div>
+
+<dl>
+  <dt>Top</dt>
+  <dd><input type="range" min="0" max="300" ng-model="top" integer /></dd>
+  
+  <dt>Left</dt>
+  <dd><input type="range" min="0" max="400" ng-model="left" integer /></dd>
+
+  <dt>Speed</dt>
+  <dd><input type="range" min="1" max="100" ng-model="speed" integer /></dd>
+
+  <dt>Height</dt>
+  <dd><input type="range" min="0" max="400" ng-model="height" integer /></dd>
+
+  <dt>Width</dt>
+  <dd><input type="range" min="0" max="400" ng-model="width" integer /></dd>
+
+  <dt>Red</dt>
+  <dd><input type="range" min="0" max="255" ng-model="red" integer /></dd>
+
+  <dt>Green</dt>
+  <dd><input type="range" min="0" max="255" ng-model="green" integer /></dd>
+
+  <dt>Blue</dt>
+  <dd><input type="range" min="0" max="255" ng-model="blue" integer /></dd>
+</dl>
