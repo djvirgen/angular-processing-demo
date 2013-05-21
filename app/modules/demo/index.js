@@ -40,56 +40,61 @@ define(['angular'], function(angular) {
       $scope.top = Math.round(Math.random() * 300);
     };
 
+    $scope.randomSize = function() {
+      $scope.width = Math.round(Math.random() * 400);
+      $scope.height = Math.round(Math.random() * 400);
+    };
+
+    $scope.size = function(size) {
+      $scope.width = $scope.height = size;
+    };
+
     $scope.randomColor = function() {
       $scope.red = Math.round(Math.random() * 255);
       $scope.green = Math.round(Math.random() * 255);
       $scope.blue = Math.round(Math.random() * 255);
     };
 
-    $scope.colorRed = function() {
-      $scope.red = 255;
-      $scope.green = 0;
-      $scope.blue = 0;
-    };
-
-    $scope.colorGreen = function() {
-      $scope.red = 0;
-      $scope.green = 255;
-      $scope.blue = 0;
-    };
-
-    $scope.colorBlue = function() {
-      $scope.red = 0;
-      $scope.green = 0;
-      $scope.blue = 255;
+    $scope.colorize = function(red, green, blue) {
+      $scope.red = red;
+      $scope.green = green;
+      $scope.blue = blue;
     };
 
     // Processing sketch definition
     $scope.sketch = function(sketch) {
+      // Local variables used by the sketch
       var X = $scope.left,
         Y = $scope.top,
         red = $scope.red,
         green = $scope.green,
         blue = $scope.blue;
 
+      // Initializes the sketch and is only run once.
       sketch.setup = function() {
         sketch.size(400, 300);
         sketch.frameRate(60);
       };
 
+      // The main draw function is run indefinitely in a loop.
       sketch.draw = function() {
+        var width, height, speed;
+
         sketch.background(120);
         sketch.strokeWeight(5);
+        speed = 101 - $scope.speed;
 
-        X += ($scope.left - X) / (100 - $scope.speed);
-        Y += ($scope.top - Y) / (100 - $scope.speed);
+        X += ($scope.left - X) / speed;
+        Y += ($scope.top - Y) / speed;
+        width = $scope.width + (Math.sin( sketch.frameCount / (speed / 4) ) * ($scope.width / 10));
+        height = $scope.height + (Math.sin( sketch.frameCount / (speed / 4) ) * ($scope.height / 10));
         red += ($scope.red - red) / 20;
         green += ($scope.green - green) / 20;
         blue += ($scope.blue - blue) / 20;
 
         sketch.stroke(255);
         sketch.fill(red, green, blue);
-        sketch.ellipse(X, Y, $scope.width, $scope.height);
+        sketch.ellipse(X, Y, width, height);
       };
     };
   });

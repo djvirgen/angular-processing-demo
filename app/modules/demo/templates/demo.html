@@ -9,42 +9,226 @@
   Click anywhere on the canvas below to move the circle, or use the buttons and
   sliders below.
 </p>
-<canvas processing="sketch" ng-click="move($sketch)"></canvas>
 
-<div>
-  <button ng-click="randomPosition()">Random Position</button>
-  <button ng-click="center()">Center</button>
+<div id="demo">
+  <div id="sketch">
+    <canvas processing="sketch" ng-click="move($sketch)"></canvas>
+  </div>
+
+  <div id="controls">
+    <div>
+      <button ng-click="randomPosition()">Random Position</button>
+      <button ng-click="center()">Center</button>
+    </div>
+
+    <div>
+      <button ng-click="randomSize()">Random Size</button>
+      <button ng-click="size(10)">Small</button>
+      <button ng-click="size(50)">Medium</button>
+      <button ng-click="size(150)">Big</button>
+      <button ng-click="size(400)">Biggest</button>
+    </div>
+
+    <div>
+      <button ng-click="randomColor()">Random Color</button>
+      <button ng-click="colorize(255, 0, 0)">Red</button>
+      <button ng-click="colorize(0, 255, 0)">Green</button>
+      <button ng-click="colorize(0, 0, 255)">Blue</button>
+    </div>
+
+    <dl>
+      <dt>Top</dt>
+      <dd><input type="range" min="0" max="300" ng-model="top" integer /></dd>
+      
+      <dt>Left</dt>
+      <dd><input type="range" min="0" max="400" ng-model="left" integer /></dd>
+
+      <dt>Speed</dt>
+      <dd><input type="range" min="1" max="100" ng-model="speed" integer /></dd>
+
+      <dt>Height</dt>
+      <dd><input type="range" min="0" max="400" ng-model="height" integer /></dd>
+
+      <dt>Width</dt>
+      <dd><input type="range" min="0" max="400" ng-model="width" integer /></dd>
+
+      <dt>Red</dt>
+      <dd><input type="range" min="0" max="255" ng-model="red" integer /></dd>
+
+      <dt>Green</dt>
+      <dd><input type="range" min="0" max="255" ng-model="green" integer /></dd>
+
+      <dt>Blue</dt>
+      <dd><input type="range" min="0" max="255" ng-model="blue" integer /></dd>
+    </dl>
+  </div>
 </div>
 
-<div>
-  <button ng-click="randomColor()">Random Color</button>
-  <button ng-click="colorRed()">Red</button>
-  <button ng-click="colorGreen()">Green</button>
-  <button ng-click="colorBlue()">Blue</button>
-</div>
+<h2>Integration Goals</h2>
+<p>
+  To integrate ProcessingJS with AngularJS, the following requirements should
+  be met:
+</p>
+<ul>
+  <li>
+    The Processing sketch should have access to the <code>$scope</code> to
+    allow for easy two-way binding.
+  </li>
+  <li>
+    The sketch should play nicely with Angular's event handlers such as
+    <code>ng-click</code>. The event handler callbacks should support easy
+    access to the sketch in order to read values from from it (e.g. 
+    <code>mouseX</code>, <code>mouseY</code>, etc.)
+  </li>
+</ul>
 
-<dl>
-  <dt>Top</dt>
-  <dd><input type="range" min="0" max="300" ng-model="top" integer /></dd>
-  
-  <dt>Left</dt>
-  <dd><input type="range" min="0" max="400" ng-model="left" integer /></dd>
+<h2>How to Integrate</h2>
+<p>
+  To support the two requirements above, a directive can be created that
+  allows a <code>&lt;canvas&gt;</code> to be tied a to a Processing sketch
+  function defined on a model:
+</p>
 
-  <dt>Speed</dt>
-  <dd><input type="range" min="1" max="100" ng-model="speed" integer /></dd>
+<pre>
+var myapp = angular.module('myapp', []);
 
-  <dt>Height</dt>
-  <dd><input type="range" min="0" max="400" ng-model="height" integer /></dd>
+myapp.directive(&#39;processing&#39;, function() {
+  return function(scope, iElement, iAttrs) {
+    scope.$sketch = new Processing(iElement[0], scope[iAttrs.processing]);
+  };
+});  
+</pre>
 
-  <dt>Width</dt>
-  <dd><input type="range" min="0" max="400" ng-model="width" integer /></dd>
+  <p>
+    This directive allows you to bind a canvas to your model's
+    <code>sketch()</code> function, which will be injected with the Processing
+    sketch:
+  </p>
 
-  <dt>Red</dt>
-  <dd><input type="range" min="0" max="255" ng-model="red" integer /></dd>
+<pre>
+&lt;div ng-controller=&quot;MyController&quot;&gt;
+  &lt;canvas processing=&quot;sketch&quot;&gt;&lt;/canvas&gt;
+&lt;/div&gt;
 
-  <dt>Green</dt>
-  <dd><input type="range" min="0" max="255" ng-model="green" integer /></dd>
+&lt;script type=&quot;text/javascript&quot;&gt;
+function MyController($scope) {
+  $scope.sketch = function(sketch) {
+    // Initialize sketch
+    sketch.setup = function() {
+      sketch.size(400, 300);
+      sketch.frameRate(60);
+    };
 
-  <dt>Blue</dt>
-  <dd><input type="range" min="0" max="255" ng-model="blue" integer /></dd>
-</dl>
+    // Main draw loop
+    sketch.draw = function() {
+      sketch.background(120);
+      sketch.strokeWeight(5);
+      sketch.stroke(255);
+      sketch.fill(255, 0, 0);
+      sketch.ellipse(200, 150, 40, 40);
+    };
+  };
+}
+&lt;/script&gt;
+</pre>
+
+<p>Since the sketch is defined within the controller, it has access to the
+  <code>$scope</code>, allowing it to easily modify the sketch based on any
+  two-way bindings you've set up:
+</p>
+
+<pre>
+&lt;div ng-controller=&quot;MyController&quot;&gt;
+  &lt;canvas processing=&quot;sketch&quot;&gt;&lt;/canvas&gt;&lt;br /&gt;
+  Size: &lt;input type=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; ng-model=&quot;size&quot; /&gt;
+&lt;/div&gt;
+
+&lt;script type=&quot;text/javascript&quot;&gt;
+function MyController($scope) {
+  $scope.size = 40;
+
+  $scope.sketch = function(sketch) {
+    // Initialize sketch
+    sketch.setup = function() {
+      sketch.size(400, 300);
+      sketch.frameRate(60);
+    };
+
+    // Main draw loop
+    sketch.draw = function() {
+      sketch.background(120);
+      sketch.strokeWeight(5);
+      sketch.stroke(255);
+      sketch.fill(255, 0, 0);
+      sketch.ellipse(200, 150, $scope.size, $scope.size);
+    };
+  };
+}
+&lt;/script&gt;
+</pre>
+
+<p>
+  If you need access to the sketch object when using Angular's event handlers
+  like <code>ng-click</code>, just pass in <code>$sketch</code> as an argument:
+</p>
+
+<pre>
+  &lt;div ng-controller=&quot;MyController&quot;&gt;
+  &lt;canvas processing=&quot;sketch&quot; ng-click=&quot;move($sketch)&quot;&gt;&lt;/canvas&gt;&lt;br /&gt;
+  Size: &lt;input type=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; ng-model=&quot;size&quot; /&gt;&lt;br /&gt;
+&lt;/div&gt;
+
+&lt;script type=&quot;text/javascript&quot;&gt;
+function MyController($scope) {
+  $scope.size = 40;
+  $scope.left = 200;
+  $scope.top = 150;
+
+  $scope.move = function($sketch) {
+    $scope.left = $sketch.mouseX;
+    $scope.top = $sketch.mouseY;
+  };
+
+  $scope.sketch = function(sketch) {
+    // Initialize sketch
+    sketch.setup = function() {
+      sketch.size(400, 300);
+      sketch.frameRate(60);
+    };
+
+    // Main draw loop
+    sketch.draw = function() {
+      sketch.background(120);
+      sketch.strokeWeight(5);
+      sketch.stroke(255);
+      sketch.fill(255, 0, 0);
+      sketch.ellipse($scope.left, $scope.top, $scope.size, $scope.size);
+    };
+  };
+}
+&lt;/script&gt;
+</pre>
+
+<h2>Todo</h2>
+<ul>
+  <li>
+    Add support for multiple Processing sketches within a controller. Currently,
+    this code limits the number of sketches to 1. This can probably be fixed by
+    configuring the directive to use a child scope, but I haven't tested it yet.
+  </li>
+  <li>
+    Add support for <code>.pde</code> files. This may get tricky because the
+    <code>.pde</code> code is run in a global context and I'm not sure if there's
+    a way to allow it to read the <code>$scope</code> aside from making
+    <code>$scope</code> a global variable -- which for obvious reasons is a bad
+    idea.
+  </li>
+</ul>
+
+<h2>Conclusion</h2>
+<p>
+  It turns out that integrating ProcessingJS with AngularJS was much easier
+  than I expected it to be. This very simple solution may not be perfect, but
+  it's a great starting point and really shows off how powerful AngularJS can
+  be when paired up with other amazing libraries.
+</p>
