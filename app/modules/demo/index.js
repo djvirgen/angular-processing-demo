@@ -11,9 +11,14 @@ define(['angular'], function(angular) {
   }]);
 
   demo.controller('DemoController', function($scope) {
+    $scope.canvas = {
+      width: 400,
+      height: 400
+    };
+
     // Position
-    $scope.left = 200;
-    $scope.top = 150;
+    $scope.left = $scope.canvas.width / 2;
+    $scope.top = $scope.canvas.height / 2;
     $scope.speed = 65;
 
     // Size
@@ -31,18 +36,18 @@ define(['angular'], function(angular) {
     };
 
     $scope.center = function() {
-      $scope.left = 200;
-      $scope.top = 150;
+      $scope.left = $scope.canvas.width / 2;
+      $scope.top = $scope.canvas.height / 2;
     };
 
     $scope.randomPosition = function() {
-      $scope.left = Math.round(Math.random() * 400);
-      $scope.top = Math.round(Math.random() * 300);
+      $scope.left = randomInt(0, $scope.canvas.width);
+      $scope.top = randomInt(0, $scope.canvas.height);
     };
 
     $scope.randomSize = function() {
-      $scope.width = Math.round(Math.random() * 400);
-      $scope.height = Math.round(Math.random() * 400);
+      $scope.width = randomInt(0, $scope.canvas.width);
+      $scope.height = randomInt(0, $scope.canvas.height);
     };
 
     $scope.size = function(size) {
@@ -50,9 +55,9 @@ define(['angular'], function(angular) {
     };
 
     $scope.randomColor = function() {
-      $scope.red = Math.round(Math.random() * 255);
-      $scope.green = Math.round(Math.random() * 255);
-      $scope.blue = Math.round(Math.random() * 255);
+      $scope.red = randomInt(0, 255);
+      $scope.green = randomInt(0, 255);
+      $scope.blue = randomInt(0, 255);
     };
 
     $scope.colorize = function(red, green, blue) {
@@ -72,30 +77,35 @@ define(['angular'], function(angular) {
 
       // Initializes the sketch and is only run once.
       sketch.setup = function() {
-        sketch.size(400, 300);
+        sketch.size($scope.canvas.width, $scope.canvas.height);
         sketch.frameRate(60);
       };
 
       // The main draw function is run indefinitely in a loop.
       sketch.draw = function() {
-        var width, height, speed;
+        var width, height, speed, sizeModifier;
 
         sketch.background(120);
-        sketch.strokeWeight(5);
         speed = 101 - $scope.speed;
+        sizeModifier = Math.sin(sketch.frameCount / speed * 4) / 10;
 
         X += ($scope.left - X) / speed;
         Y += ($scope.top - Y) / speed;
-        width = $scope.width + (Math.sin( sketch.frameCount / (speed / 4) ) * ($scope.width / 10));
-        height = $scope.height + (Math.sin( sketch.frameCount / (speed / 4) ) * ($scope.height / 10));
+        width = $scope.width + (sizeModifier * $scope.width);
+        height = $scope.height + (sizeModifier * $scope.height);
         red += ($scope.red - red) / 20;
         green += ($scope.green - green) / 20;
         blue += ($scope.blue - blue) / 20;
 
+        sketch.strokeWeight((width + height) / 20);
         sketch.stroke(255);
         sketch.fill(red, green, blue);
         sketch.ellipse(X, Y, width, height);
       };
+    };
+
+    var randomInt = function(min, max, inclusive) {
+      return Math.floor(Math.random() * (max - min) + min);
     };
   });
 

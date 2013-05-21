@@ -4,13 +4,13 @@
   library with your <a href="http://angularjs.org">AngularJS</a> application.
 </p>
 
-<h2>Demo</h2>
-<p>
-  Click anywhere on the canvas below to move the circle, or use the buttons and
-  sliders below.
-</p>
-
 <div id="demo">
+  <h2>Demo</h2>
+  <p>
+    Click anywhere on the canvas below to move the circle, or use the buttons and
+    sliders below.
+  </p>
+
   <div id="sketch">
     <canvas processing="sketch" ng-click="move($sketch)"></canvas>
   </div>
@@ -21,6 +21,19 @@
       <button ng-click="center()">Center</button>
     </div>
 
+    <dl>
+      <dt>Left</dt>
+      <dd><input type="range" min="0" max="400" ng-model="left" integer /></dd>
+
+      <dt>Top</dt>
+      <dd><input type="range" min="0" max="400" ng-model="top" integer /></dd>
+
+      <dt>Speed</dt>
+      <dd><input type="range" min="1" max="100" ng-model="speed" integer /></dd>
+    </dl>
+
+    <hr />
+
     <div>
       <button ng-click="randomSize()">Random Size</button>
       <button ng-click="size(10)">Small</button>
@@ -28,6 +41,16 @@
       <button ng-click="size(150)">Big</button>
       <button ng-click="size(400)">Biggest</button>
     </div>
+
+    <dl>
+      <dt>Height</dt>
+      <dd><input type="range" min="0" max="400" ng-model="height" integer /></dd>
+
+      <dt>Width</dt>
+      <dd><input type="range" min="0" max="400" ng-model="width" integer /></dd>
+    </dl>
+
+    <hr />
 
     <div>
       <button ng-click="randomColor()">Random Color</button>
@@ -37,21 +60,6 @@
     </div>
 
     <dl>
-      <dt>Top</dt>
-      <dd><input type="range" min="0" max="300" ng-model="top" integer /></dd>
-      
-      <dt>Left</dt>
-      <dd><input type="range" min="0" max="400" ng-model="left" integer /></dd>
-
-      <dt>Speed</dt>
-      <dd><input type="range" min="1" max="100" ng-model="speed" integer /></dd>
-
-      <dt>Height</dt>
-      <dd><input type="range" min="0" max="400" ng-model="height" integer /></dd>
-
-      <dt>Width</dt>
-      <dd><input type="range" min="0" max="400" ng-model="width" integer /></dd>
-
       <dt>Red</dt>
       <dd><input type="range" min="0" max="255" ng-model="red" integer /></dd>
 
@@ -66,37 +74,43 @@
 
 <h2>Integration Goals</h2>
 <p>
-  To integrate ProcessingJS with AngularJS, the following requirements should
-  be met:
+  To integrate Processing with Angular, the following requirements should be met:
 </p>
-<ul>
+<ul class="requirements">
   <li>
-    The Processing sketch should have access to the <code>$scope</code> to
-    allow for easy two-way binding.
+    <i class="icon-check"></i> The Processing sketch should have access to the
+    <code>$scope</code> to allow for easy two-way binding.
   </li>
   <li>
-    The sketch should play nicely with Angular's event handlers such as
-    <code>ng-click</code>. The event handler callbacks should support easy
-    access to the sketch in order to read values from from it (e.g. 
-    <code>mouseX</code>, <code>mouseY</code>, etc.)
+    <i class="icon-check"></i> The sketch should play nicely with Angular's
+    event handlers such as <code>ng-click</code>. The event handler callbacks
+    should support easy access to the sketch in order to read values from from
+    it (e.g. <code>mouseX</code>, <code>mouseY</code>, etc.)
+  </li>
+  <li>
+    <i class="icon-check"></i> Multiple independent sketches should be supported
+    within the same controller.
   </li>
 </ul>
 
 <h2>How to Integrate</h2>
 <p>
   To support the two requirements above, a directive can be created that
-  allows a <code>&lt;canvas&gt;</code> to be tied a to a Processing sketch
-  function defined on a model:
+  allows a <code>&lt;canvas&gt;</code> to declare which model function should be
+  used as the Processing sketch:
 </p>
 
 <pre>
 var myapp = angular.module('myapp', []);
 
 myapp.directive(&#39;processing&#39;, function() {
-  return function(scope, iElement, iAttrs) {
-    scope.$sketch = new Processing(iElement[0], scope[iAttrs.processing]);
+  return {
+    scope: true,
+    link: function(scope, iElement, iAttrs) {
+      scope.$sketch = new Processing(iElement[0], scope[iAttrs.processing]);
+    }
   };
-});  
+});
 </pre>
 
   <p>
@@ -210,11 +224,15 @@ function MyController($scope) {
 </pre>
 
 <h2>Todo</h2>
-<ul>
+<ul class="todo">
   <li>
+    <strike>
     Add support for multiple Processing sketches within a controller. Currently,
     this code limits the number of sketches to 1. This can probably be fixed by
     configuring the directive to use a child scope, but I haven't tested it yet.
+    </strike><br />
+    <strong>5/21/2013:</strong> This is now supported. It turns out it was as
+    easy as configuring the directive to use a child scope.
   </li>
   <li>
     Add support for <code>.pde</code> files. This may get tricky because the
@@ -227,9 +245,9 @@ function MyController($scope) {
 
 <h2>Conclusion</h2>
 <p>
-  It turns out that integrating ProcessingJS with AngularJS was much easier
+  It turns out that integrating Processing with Angular was much easier
   than I expected it to be. This very simple solution may not be perfect, but
-  it's a great starting point and really shows off how powerful AngularJS can
+  it's a great starting point and really shows off how powerful Angular can
   be when paired up with other amazing libraries.
 </p>
 

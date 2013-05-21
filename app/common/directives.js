@@ -4,8 +4,11 @@ define(['angular', 'Processing'], function(angular, Processing) {
   var directives = angular.module('myapp.directives', []);
   
   directives.directive('processing', function() {
-    return function(scope, iElement, iAttrs) {
-      scope.$sketch = new Processing(iElement[0], scope[iAttrs.processing]);
+    return {
+      scope: true,
+      link: function(scope, iElement, iAttrs) {
+        scope.$sketch = new Processing(iElement[0], scope[iAttrs.processing]);
+      }
     };
   });
 

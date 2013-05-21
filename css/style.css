@@ -19,6 +19,19 @@ a{
   color: #36d;
 }
 
+h1, h2, h3, h4, h5, h6{
+  margin: 0;
+  padding: 0;
+}
+
+hr{
+  margin: 16px 0;
+  padding: 0;
+  border: none;
+  height: 2px;
+  background: #ccc;
+}
+
 dl{
   margin: 0;
   padding: 0;
@@ -69,11 +82,15 @@ canvas{
 code, pre{
   font-size: inherit;
   font-family: consolas, inconsolata, fixed;
-  background: #f2f2f2;
-  color: #444;
+  color: #000;
+}
+
+code{
+  background: #ffa;
 }
 
 pre{
+  background: #f2f2f2;
   padding: 8px;
   border: 1px dashed #ccc;
 }
@@ -90,6 +107,12 @@ pre{
 
 #controls{
   margin-left: 420px;
+}
+
+ul.requirements{
+  padding: 0;
+  margin: 16px 0 16px 16px;
+  list-style-type: none;
 }
 
 a.forkme{
