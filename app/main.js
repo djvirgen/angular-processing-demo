@@ -17,8 +17,8 @@ require(['angular', 'app'], function(angular, app) {
   "use strict";
   
   // Bootstrap the application
-  var html = document.getElementsByTagName('html')[0];
-  var $html = angular.element(html);
-  angular.bootstrap($html, [app['name']]);
-  $html.addClass('ng-app');
+  var main = document.getElementById('main');
+  var $main = angular.element(main);
+  angular.bootstrap($main, [app['name']]);
+  $main.addClass('ng-app');
 });
