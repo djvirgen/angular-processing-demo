@@ -1,11 +1,15 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <title>AngularJS and ProcessingJS Playing Nicely Together</title>
+  <meta name="title" content="AngularJS and ProcessingJS Playing Together"></meta>
+  <meta name="content" content="How to make AngularJS and ProcessingJS play nicely together."></meta>
+  <meta name="keywords" content="AngularJS ProcessingJS Javascript"></meta>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script type="text/javascript" data-main="app/main.js" src="/app/require.js"></script>
   <link rel="stylesheet" type="text/css" href="/css/style.css"></link>
 </head>
 <body>
-  <div ng-view></div>
+  <div ng-view ng-cloak></div>
 </body>
 </html>
