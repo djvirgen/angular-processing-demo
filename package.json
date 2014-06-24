@@ -6,7 +6,8 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "connect": "*"
+    "connect": "latest",
+    "serve-static": "latest"
   },
   "engines": {
     "node": "0.10.x",
